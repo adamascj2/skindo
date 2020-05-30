@@ -1,1 +1,1 @@
-# skindo
+Nesse repositório estão arquivos de scripts, imagens etc. usados no curso que está no canal do Youtube "Americo Damsceno". Alguns desses conteudos vieram do "HUBS MOZILLA" e acreditamos serem públicos. Qualquer dúvida use o Youtube para se comunicar conosco.
