@@ -1,0 +1,72 @@
+﻿using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+
+  
+ 
+public class Conecta : MonoBehaviourPunCallbacks
+{
+         
+   private byte maxPlayersPerRoom = 20;
+   string gameVersion = "1";
+
+    void Awake()
+    {
+      PhotonNetwork.AutomaticallySyncScene = true;
+    }
+
+
+    void OnGUI ()
+   {
+     GUIStyle myButtonStyle = new GUIStyle(GUI.skin.button);
+     myButtonStyle.fontSize = 60;
+     Font myFont1 = (Font)Resources.Load("Fonts/comic", typeof(Font));
+     myButtonStyle.font = myFont1;
+     myButtonStyle.normal.textColor = Color.yellow;
+     myButtonStyle.hover.textColor = Color.yellow; 
+
+     if(GUI.Button(new Rect(500,Screen.height -  150,600,200), "CONECTAR",myButtonStyle))
+     {
+       Connect();
+     }
+        
+   }     
+
+    public void Connect()
+    {
+      if (PhotonNetwork.IsConnected)
+      {
+        PhotonNetwork.JoinRandomRoom();
+       }
+       else
+       {
+         PhotonNetwork.ConnectUsingSettings();
+         PhotonNetwork.GameVersion = gameVersion;
+        }
+      }
+
+      public override void OnConnectedToMaster()
+      {
+       PhotonNetwork.JoinRandomRoom();
+      }
+
+
+      public override void OnDisconnected(DisconnectCause cause)
+      {
+          Debug.LogWarningFormat("Disconectou com causa:", cause);
+      }
+
+      public override void OnJoinRandomFailed(short returnCode, string message)
+     {
+      //Se não tem room criada - nosso caso
+       PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+      }
+
+      public override void OnJoinedRoom()
+      {
+        Debug.Log("SUCESSO! Vai pra outra cena");
+        PhotonNetwork.LoadLevel("CENA2");
+       }
+
+ }
+ 
