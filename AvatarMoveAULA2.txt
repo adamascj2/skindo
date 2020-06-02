@@ -1,0 +1,20 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+ 
+public class AvatarMove : MonoBehaviour
+{
+  public PhotonView photonView;
+  public GameObject Player;
+   
+   
+   void Start()
+  {
+     PhotonNetwork.Instantiate ("robot",transform.position,transform.rotation,0);
+     Player = GameObject.Find("robot(Clone)");
+      
+   }
+
+}
