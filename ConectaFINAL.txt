@@ -1,0 +1,94 @@
+﻿using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+
+  
+ 
+public class Conecta : MonoBehaviourPunCallbacks
+{
+         
+   public byte maxPlayersPerRoom = 20;
+   string gameVersion = "1";
+   //////////////
+   string URLSkin =  "https://raw.githubusercontent.com/adamascj2/skindo/master/james.jpg"; 
+   ///////////// 
+
+
+void Awake()
+    {
+      PhotonNetwork.AutomaticallySyncScene = true;
+    }
+
+
+    void OnGUI ()
+   {
+     GUIStyle myButtonStyle = new GUIStyle(GUI.skin.button);
+     myButtonStyle.fontSize = 60;
+     Font myFont1 = (Font)Resources.Load("Fonts/comic", typeof(Font));
+     myButtonStyle.font = myFont1;
+     myButtonStyle.normal.textColor = Color.yellow;
+     myButtonStyle.hover.textColor = Color.yellow; 
+
+     if(GUI.Button(new Rect(500,Screen.height -  150,600,200), "CONECTAR",myButtonStyle))
+     {
+       Connect();
+     }
+     ///////////////////////
+     GUIStyle myTextStyle = new GUIStyle(GUI.skin.textField);
+     myTextStyle.fontSize = 60;
+     Font myFont2 = (Font)Resources.Load("Fonts/comic", typeof(Font));
+     myTextStyle.font = myFont2;
+     myTextStyle.normal.textColor = Color.red;
+     myTextStyle.hover.textColor = Color.red;
+     
+     URLSkin = GUI.TextField (new Rect (0,100,2600,80), URLSkin,myTextStyle );
+     PlayerPrefs.SetString("mySkin",URLSkin);
+
+     GUIStyle myLabelStyle = new GUIStyle(GUI.skin.label);
+     myLabelStyle.fontSize = 60;
+     Font myFont3 = (Font)Resources.Load("Fonts/comic", typeof(Font));
+     myLabelStyle.font = myFont3;
+     myLabelStyle.normal.textColor = Color.yellow;
+     myLabelStyle.hover.textColor = Color.yellow; 
+     GUI.Label(new Rect(0,0,2000,120),"ENTRE URL DA SUA SKIN",myLabelStyle);
+     //////////////////////
+   }     
+
+    public void Connect()
+    {
+      if (PhotonNetwork.IsConnected)
+      {
+        PhotonNetwork.JoinRandomRoom();
+       }
+       else
+       {
+         PhotonNetwork.ConnectUsingSettings();
+         PhotonNetwork.GameVersion = gameVersion;
+        }
+      }
+
+      public override void OnConnectedToMaster()
+      {
+       PhotonNetwork.JoinRandomRoom();
+      }
+
+
+      public override void OnDisconnected(DisconnectCause cause)
+      {
+          Debug.LogWarningFormat("Disconectou com causa:", cause);
+      }
+
+      public override void OnJoinRandomFailed(short returnCode, string message)
+     {
+      //Se não tem room criada - nosso caso
+       PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+      }
+
+      public override void OnJoinedRoom()
+      {
+        Debug.Log("SUCESSO! Vai pra outra cena");
+        PhotonNetwork.LoadLevel("CENA2");
+       }
+
+ }
+ 
