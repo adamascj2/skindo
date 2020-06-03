@@ -1,0 +1,59 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+using UnityStandardAssets.CrossPlatformInput;
+
+
+public class AvatarMove : MonoBehaviour
+{
+  public PhotonView photonView;
+  public GameObject Player;
+  public CharacterController controller; 
+  public float speed = 3.0F;
+  public float rotateSpeed = 0.0F;
+  public float jumpSpeed = 60;
+  public float rotationSpeed = 45;
+  Vector3 currentEulerAngles;
+  Vector3 deltaDirection;
+   
+        
+    void Start()
+    {
+       PhotonNetwork.Instantiate ("robot",transform.position,transform.rotation,0);
+       Player = GameObject.Find("robot(Clone)");
+       photonView = Player.GetComponent<PhotonView>();  
+    }
+
+    
+      void Update()
+      {
+        //Para avatar girar
+        controller = Player.GetComponent<CharacterController>();
+        float horizontalInput = CrossPlatformInputManager.GetAxis ("Horizontal");
+	currentEulerAngles += new Vector3(0,horizontalInput,0 ) * Time.deltaTime * rotationSpeed;
+        Player.transform.eulerAngles = currentEulerAngles;
+        transform.eulerAngles = currentEulerAngles;
+	//Para avatar ir	 
+	Vector3 forward = transform.TransformDirection(Vector3.forward);
+	float curSpeed = speed * CrossPlatformInputManager.GetAxis("Vertical");
+	controller.SimpleMove(forward*curSpeed*Time.deltaTime);  
+      }
+    
+     void OnGUI ()
+    {
+      GUIStyle myButtonStyle = new GUIStyle(GUI.skin.button);
+      myButtonStyle.fontSize = 60;
+      Font myFont1 = (Font)Resources.Load("Fonts/comic", typeof(Font));
+      myButtonStyle.font = myFont1;
+      myButtonStyle.normal.textColor = Color.yellow;
+      myButtonStyle.hover.textColor = Color.yellow; 
+         
+        if(GUI.Button(new Rect(Screen.width-300,Screen.height -  150,300,150), "SALTAR",myButtonStyle)) {
+         //Para avatar saltar
+         deltaDirection.y = jumpSpeed;
+	 controller.Move(deltaDirection*Time.deltaTime);  
+        }  
+      }
+}
