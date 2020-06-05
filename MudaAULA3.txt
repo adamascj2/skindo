@@ -1,0 +1,69 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+ 
+public class Muda: MonoBehaviourPun
+{
+  public string entrante;
+  public PhotonView photonView;
+  public string URLSkin =  "https://raw.githubusercontent.com/adamascj2/skindo/master/mozilla.jpg"; 
+     
+   void Start()
+   {
+     photonView = this.GetComponent<PhotonView>(); 
+     entrante =  photonView.ViewID.ToString(); 
+     URLSkin = PlayerPrefs.GetString("mySkin");  
+    //Muda nomes
+     if(photonView.IsMine) photonView.RPC("Mudar", RpcTarget.AllBuffered,entrante);
+    //Muda skin
+    if(photonView.IsMine) photonView.RPC("CarregaSk", RpcTarget.AllBuffered,entrante,URLSkin); 
+    }
+
+    void  OnGUI ()
+    {
+       GUIStyle myTextStyle = new GUIStyle(GUI.skin.textField);
+       myTextStyle.fontSize = 60;
+       Font myFont2 = (Font)Resources.Load("Fonts/comic", typeof(Font));
+       myTextStyle.font = myFont2;
+       myTextStyle.normal.textColor = Color.red;
+       myTextStyle.hover.textColor = Color.red;
+        
+       GUI.TextField (new Rect(Screen.width - 2500,0,200,100), entrante,myTextStyle);
+       
+     }
+
+     
+    }
+
+    [PunRPC]
+
+    void  Mudar(string ent )
+    {
+     PhotonView photonViewX = this.GetComponent<PhotonView>();
+     if(photonViewX.ViewID.ToString() == ent){
+       //nome do avatar
+       GetComponentInChildren<Transform>().name = GetComponentInChildren<Transform>().name +ent;
+       //nome da textura
+       GetComponentInChildren<Renderer>().materials[0].name = GetComponentInChildren<Renderer>().materials[0].name+ent;
+      }
+    }
+    
+    [PunRPC]
+
+    IEnumerator  CarregaSk(string ent,string URL )
+    {
+     PhotonView photonViewX = this.GetComponent<PhotonView>();
+     if(photonViewX.ViewID.ToString() == ent){
+       GameObject GOH = GameObject.Find("robot(Clone)"+ent);
+       using (WWW www = new WWW(URL))
+       {
+         yield return www;
+         GOH.GetComponentInChildren<Renderer>().materials[0].mainTexture  = www.texture;
+        }  
+       }
+     }
+
+     
+}
