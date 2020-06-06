@@ -1,0 +1,33 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+ 
+public class CameraSegue : MonoBehaviour
+{
+    public GameObject  Player;
+    public float cameraDistance = 2.0f;
+    public string ent;
+   
+    void LateUpdate()
+    { 
+       ent = Muda.entstatic;
+       Player = GameObject.Find("robot(Clone)"+ent); 
+        //Se ainda nao tem Player, ignora o que segue
+        if(!Player)return;
+        transform.position =  Player.transform.position -  Player.transform.forward * cameraDistance;
+        transform.LookAt ( Player.transform.position);
+        transform.position = new Vector3 (transform.position.x, transform.position.y + 1, transform.position.z);
+      
+    }
+    
+          
+    
+  
+  
+
+   
+ 
+          
+    
+  
+} 
